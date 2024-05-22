@@ -65,37 +65,3 @@ ggplot(M1_new, aes(x = M1_new$Region, y = percent, fill= M1_new$Region)) +
   scale_y_continuous(labels = scales::percent)
 
 
-#stacked barplot
-
-str(C8_new)
-data_C8 <- data.frame(strand=rep(c("+" , "-"), each=8),
-                      C8_new$Region=rep(c("enhancer", "divergent", "promoter", "geneBody",
-                                   "CPS", "TW", "untranscribed"), 2),
-                      count=c(1376, 1520, 6837, 2254, 150, 385, 776))
-head(data_C8)
-data_C8$region = factor(data_C8$region, c("enhancer", "divergent", "promoter", "geneBody", "CPS", "TW", "untranscribed"))
-ggplot(data=data_C8, aes(x=region, y=count, fill=strand)) +
-  geom_bar(stat="identity") +
-  labs(x = "C8_new$Region", y = "count", title = "CDK8 distribution to FGRs") +
-  theme_minimal()
-
-###Add labels to a stacked barplot 
-str(C8_new)
-data_C8 <- data.frame(strand=rep(c("+" , "-") , each=8),
-                      C8_new$Region=rep(c("enhancer", "divergent", "promoter", "geneBody",
-                                          "CPS", "TW", "untranscribed"), 2),
-                      count=c(1376, 1520, 6837, 2254, 150, 385, 776))
-df_C82 <- arrange(df_C8, C8_new$Region, strand) 
-head(df_C82)
-df_C2 <- ddply(df_C82, "C8_new$Region",
-               transform, label_y=cumsum(count))
-ggplot(df_C2, aes(x=C8_new$Region, y=count, fill=strand)) +
-  geom_bar(stat="identity")+
-  geom_text(aes(y=label_y, label=count), vjust=1.6, 
-            color="white", size=3.5)+
-  scale_fill_brewer(palette="Paired")+
-  theme_minimal()
-
-
-
-
