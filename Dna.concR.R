@@ -26,65 +26,23 @@ ggplot(data, aes(x = Condition, y = DNA_Concentration, fill = Sample)) +
   theme_minimal() +
   theme(legend.position = "top")
 
-#Name	DNA Conc.
-Input Ctrl.	15.2 ng/ul
-Input H 1hr	6.77 ng/ul
-Input HS 1hr	6.95 ng/ul
-MED1 Ctrl	232 ng/ul
-MED1 H 1hr	2.03 ng/ul
-MED1 HS 1hr	206 ng/ul
-CDK8 Ctrl.	40.5 ng/ul
-CDK8 H 1hr	117 ng/ul
-CDK8 HS 1hr	71.6 ng/ul
 
 library(ggplot2)
 
 # Create the data frame
 data <- data.frame(
-  Name = c("Input Ctrl.", "Input H 1hr", "Input HS 1hr", "MED1 Ctrl", "MED1 H 1hr", "MED1 HS 1hr", "CDK8 Ctrl.", "CDK8 H 1hr", "CDK8 HS 1hr"),
-  DNA_Conc = c(15.2, 6.77, 6.95, 232, 2.03, 206, 40.5, 117, 71.6)
-)
-
-# Create the plot
-ggplot(data, aes(x = Name, y = DNA_Conc, fill = Name)) +
-  geom_bar(stat = "identity", position = position_dodge()) +
-  geom_text(aes(label = DNA_Conc), vjust = -0.3, position = position_dodge(0.9), size = 3) +
-  labs(title = "DNA Concentration by Sample",
-       x = "Sample",
-       y = "DNA Concentration (ng/ul)") +
-  theme_minimal() +
-  theme(axis.text.x = element_text(angle = 45, hjust = 1),
-        legend.position = "none")
-
-
-
-
-
-
-
-# Create the data frame
-data <- data.frame(
-  Sample = c("Input Ctrl.", "Input H 1hr", "Input HS 1hr", "MED1 Ctrl", "MED1 H 1hr", "MED1 HS 1hr", "CDK8 Ctrl.", "CDK8 H 1hr", "CDK8 HS 1hr"),
-  DNA_Conc = c(15.2, 6.77, 6.95, 232, 2.03, 206, 40.5, 117, 71.6),
+  Name = c("Input Ctrl.", "Input He 1hr", "Input HS 1hr", "MED1 Ctrl.", "MED1 He 1hr", "MED1 HS 1hr", "CDK8 Ctrl.", "CDK8 He 1hr", "CDK8 HS 1hr"),
   Sample_Conc = c(3.04, 1.35, 1.39, 46.4, 0.407, 41.2, 8.10, 23.4, 14.3)
 )
+# Extract Group and Condition from Name
+data$Samples <- sapply(strsplit(as.character(data$Name), " "), function(x) x[1])
+data$Condition <- sapply(strsplit(as.character(data$Name), " "), function(x) paste(x[-1], collapse=" "))
 
-# Normalize the data
-data$DNA_Conc_Scaled <- data$DNA_Conc / max(data$DNA_Conc)
-data$Sample_Conc_Scaled <- data$Sample_Conc / max(data$Sample_Conc)
+# Print the modified data frame to check
+print(data)
 
-# Convert data to long format for plotting
-data_long <- gather(data, key = "Type", value = "Concentration_Scaled", DNA_Conc_Scaled, Sample_Conc_Scaled)
-data_long$Type <- factor(data_long$Type, labels = c("DNA Concentration (scaled)", "Sample Concentration (scaled)"))
-
-# Create the plot
-ggplot(data_long, aes(x = Sample, y = Concentration_Scaled, fill = Type)) +
-  geom_bar(stat = "identity", position = position_dodge()) +
-  geom_text(aes(label = round(Concentration_Scaled, 2)), vjust = -0.3, position = position_dodge(0.9), size = 3) +
-  labs(title = "Scaled Concentration by Sample and Type",
-       x = "Sample",
-       y = "Scaled Concentration") +
-  theme_minimal() +
-  theme(axis.text.x = element_text(angle = 45, hjust = 1),
-        legend.position = "top")
-
+# Create the grouped bar graph
+ggplot(data, aes(x = Samples, y = Sample_Conc, fill = Condition)) +
+  geom_bar(stat = 'identity', position = 'dodge') +
+  labs(title = 'Sample concentration in nine samples', x = 'Samples', y = 'Sample Concentration_ ug/ml') +
+  theme_minimal()
